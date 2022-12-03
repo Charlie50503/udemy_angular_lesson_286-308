@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AuthService } from '../auth/auth.service';
 
 import { DataStorageService } from '../shared/data-storage.service';
 
@@ -6,14 +8,30 @@ import { DataStorageService } from '../shared/data-storage.service';
   selector: 'app-header',
   templateUrl: './header.component.html'
 })
-export class HeaderComponent {
-  constructor(private dataStorageService: DataStorageService) {}
+export class HeaderComponent implements OnInit,OnDestroy {
+  isAuthenticated = false;
+  private userSub: Subscription;
+  constructor(
+    private dataStorageService: DataStorageService,
+    private authService: AuthService) { }
 
+  ngOnInit(): void {
+      this.userSub = this.authService.user.subscribe(user=>{
+        // this.isAuthenticated = !user ? false : true;
+        this.isAuthenticated = !!user; // 小技巧 當user為null或是false時,反向的反向就會是false
+        console.log(!user);
+        console.log(!!user);
+      })
+  }
   onSaveData() {
     this.dataStorageService.storeRecipes();
   }
 
   onFetchData() {
     this.dataStorageService.fetchRecipes().subscribe();
+  }
+
+  ngOnDestroy(){
+    this.userSub.unsubscribe()
   }
 }
