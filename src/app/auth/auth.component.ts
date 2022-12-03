@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { NgForm } from "@angular/forms";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { AuthResponseData, AuthService } from "./auth.service";
 
@@ -12,7 +13,8 @@ export class AuthComponent {
   isLoading = false;
   error: string = null;
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private router:Router
   ) {
 
   }
@@ -41,6 +43,7 @@ export class AuthComponent {
     autObs.subscribe(resData => {
       console.log(resData);
       this.isLoading = false
+      this.router.navigate(["./recipes"])
     }, errorStr => {
       this.error = errorStr
       this.isLoading = false
