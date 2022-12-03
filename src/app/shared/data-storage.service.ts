@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { exhaustMap, map, take, tap } from 'rxjs/operators';
 
 import { Recipe } from '../recipes/recipe.model';
@@ -23,12 +23,18 @@ export class DataStorageService {
   }
 
   fetchRecipes() {
-    this.authService.user.pipe(
+    return this.authService.user.pipe(
       take(1),
       exhaustMap(user => {
+        console.log("user",user);
+
         return this.http
           .get<Recipe[]>(
-            'https://angular-http-request-dd100-default-rtdb.asia-southeast1.firebasedatabase.app/recipes.json'
+            // 'https://angular-http-request-dd100-default-rtdb.asia-southeast1.firebasedatabase.app/recipes.json?auth=' +user.token // 方法一
+            'https://angular-http-request-dd100-default-rtdb.asia-southeast1.firebasedatabase.app/recipes.json', // 方法二
+            {
+              params:new HttpParams().set("auth",user.token)
+            }
           )
       }),
       map(recipes => {
