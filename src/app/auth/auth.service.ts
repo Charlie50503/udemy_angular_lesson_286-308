@@ -32,7 +32,7 @@ export class AuthService {
     }).pipe(
       catchError(this.handleError),
       tap(resData => {
-        this.handleAuthentication(resData.email,resData.localId,resData.idToken,resData.expiresIn)
+        this.handleAuthentication(resData.email,resData.localId,resData.idToken,+resData.expiresIn)
       }))
   }
 
@@ -43,6 +43,8 @@ export class AuthService {
       returnSecureToken: true
     }).pipe(catchError(errorRes => {
       return this.handleError(errorRes);
+    }),tap(resData => {
+      this.handleAuthentication(resData.email,resData.localId,resData.idToken,+resData.expiresIn)
     }))
   }
 
