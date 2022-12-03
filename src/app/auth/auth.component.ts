@@ -34,9 +34,11 @@ export class AuthComponent {
       this.authService.signup(email,password).subscribe(resData=>{
         console.log(resData);
         this.isLoading = false
-      },err=>{
-        console.log(err.error.message);
-        this.error = err
+      },errorRes=>{
+        switch(errorRes.error.error.message){
+          case "EMAIL_EXISTS":
+            this.error = "This email exists already";
+        }
         this.isLoading = false
       })
     }
